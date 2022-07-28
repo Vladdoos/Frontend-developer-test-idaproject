@@ -1,34 +1,119 @@
 <template>
-  <div class="">
-    <h1 @click="showForm">Добавление товара</h1>
-    <div :class="{ 'block-form__show': isActive }" class="block-form">
-      <p>Наименование товара</p>
-      <input value="Введите наименование товара">
-      <span>Описание товара</span>
-      <textarea placeholder="Введите описание товара"></textarea>
-      <p>Ссылка на изображение товара</p>
-      <input value="Введите ссылку">
-      <p>Цена товара</p>
-      <input value="Введите цену">
-      <button>Добавить товар</button>
+  <div>
+        <h1 @click="showForm">Добавление товара</h1>
+      <div :class="{ 'block-form__show': isActiveShowForm }" class="block-form">
 
-    </div>
+        <label for="title">Наименование товара</label>
+        <input
+          @blur="checkTitle"
+          :class="{ 'inp-error': errorTittle }"
+          id="title"
+          v-model="title"
+          placeholder="Введите наименование товара"
+
+        >
+        <p v-if="errorTittle">Поле является обязательным</p>
+
+        <span>Описание товара</span>
+        <textarea
+          id="description"
+          v-model="description"
+          placeholder="Введите описание товара"
+        >
+        </textarea>
+
+        <label for="img">Ссылка на изображение товара</label>
+        <input
+          @blur="checkImg"
+          :class="{ 'inp-error': errorImg}"
+          id="img"
+          v-model="img"
+          placeholder="Введите ссылку"
+        >
+        <p v-if="errorImg">Поле является обязательным</p>
+
+        <label for="price">Цена товара</label>
+        <input
+          @blur="checkPrice"
+          @focus="changePrice"
+          placeholder="Введите цену"
+          :class="{ 'inp-error': errorPrice }"
+          id="price"
+          v-model="price"
+        >
+        <p v-if="errorPrice">Поле является обязательным и должно быть числом</p>
+
+        <button
+          @click="addProduct()"
+          :class="{ 'btn-active': !activity()}"
+          :disabled="activity()"
+        >Добавить товар</button>
+      </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "formBlock",
-  data() {
+  name: 'formBlock',
+  data () {
     return {
-      isActive: false,
+      isActiveShowForm: false,
+      title: '',
+      description: '',
+      price: '',
+      img: '',
+      errorTittle: false,
+      errorPrice: false,
+      errorImg: false
     }
   },
   methods: {
-    showForm() {
-      if (window.innerWidth <= 640) {
-        this.isActive = !this.isActive
+    // Добавление продукта
+    addProduct () {
+      let itemProduct = {}
+      itemProduct.title = this.title
+      itemProduct.description = this.description
+      itemProduct.img = this.img
+      itemProduct.price = this.price
+      this.$emit('item', itemProduct)
+      this.title = ''
+      this.description = ''
+      this.img = ''
+      this.price = ''
+    },
+    // Валидация наименования
+    checkTitle () {
+      this.errorTittle = !this.title
+    },
+    // Валидация ссылки изображения
+    checkImg () {
+      this.errorImg = !this.img
+    },
+    // Валидация цены
+    checkPrice () {
+      // eslint-disable-next-line
+      if ((this.price ^ 0) == this.price && this.price) {
+        this.errorPrice = false
+        this.price = this.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+      } else {
+        this.errorPrice = true
       }
+    },
+    // Редактирование цены
+    changePrice () {
+      if (this.price) {
+        this.price = this.price.split(' ').join('')
+      }
+    },
+    // Скрытие/показ формы для мобильных устройств
+    showForm () {
+      if (window.innerWidth <= 640) {
+        this.isActiveShowForm = !this.isActiveShowForm
+      }
+    },
+    // Активация кнопки
+    activity () {
+      return !(this.title && this.img && String(parseInt(this.price.split(' ').join(''), 10)) === String(this.price.split(' ').join('')))
     }
   }
 }
@@ -41,10 +126,11 @@ export default {
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.04), 0px 6px 10px rgba(0, 0, 0, 0.02);
   border-radius: 4px;
   text-align: left;
-  position: sticky;
+  position:-webkit-sticky;
+  position:sticky;
   top: 24px;
 }
-h1, p, span {
+h1, label, span {
   text-align: left;
 }
 h1{
@@ -53,11 +139,11 @@ h1{
   line-height: 35px;
   margin-top: -53px;
 }
-p, span{
-  font-size: 10px;
+label, span{
+  font-size: 13px;
   line-height: 13px;
 }
-p::after{
+label::after{
   content: '';
   display: inline-block;
   width: 5px;
@@ -65,6 +151,11 @@ p::after{
   background: #FF8484;
   border-radius: 50%;
   position: absolute;
+}
+p{
+  color: #FF8484;
+  font-size: 11px;
+  margin: 0;
 }
 input{
   width: 100%;
@@ -78,6 +169,9 @@ input{
   color: #B4B4B4;
 }
 input:focus-visible{
+  border: 1px solid #7BAE73;
+}
+.inp-error{
   border: 1px solid #FF8484;
 }
 input:active, :hover, :focus {
@@ -105,13 +199,21 @@ button{
   border-radius: 10px;
   border: 0;
   margin-top: 8px;
-
   font-weight: 600;
   font-size: 12px;
   line-height: 15px;
   text-align: center;
   letter-spacing: -0.02em;
   color: #B4B4B4;
+}
+.btn-active{
+  background: #7BAE73;
+  color: #FFFFFF;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 @media (max-width: 640px) {
   .block-form__show{

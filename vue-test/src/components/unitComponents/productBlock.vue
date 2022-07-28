@@ -1,6 +1,6 @@
 <template>
   <div class="block-products">
-    <div class="block-products__product" v-for="item of arrProducts">
+    <div class="block-products__product modal-visible" v-for="(item, index) of arrProducts" :key="index">
       <div class="showDel"></div>
       <div class="product-img">
         <img :src="item.img" alt="logo">
@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  name: "productBlock",
+  name: 'productBlock',
   props: {
     arrProducts: []
   }
@@ -40,8 +40,13 @@ export default {
 .product-text{
   padding: 16px;
 }
+.product-img{
+  height: 200px;
+}
 img{
+  object-fit: cover;
   width: 100%;
+  height: 100%;
 }
 h1,h2, p{
   text-align: left;
@@ -51,13 +56,23 @@ h1{
   font-size: 20px;
   margin-top: 0;
   margin-bottom: 16px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
+
 h2{
   font-weight: 400;
   font-size: 16px;
   line-height: 20px;
   margin-top: 0;
   margin-bottom: 32px;
+  height: 80px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 p{
   font-weight: 600;

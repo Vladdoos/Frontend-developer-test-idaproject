@@ -1,31 +1,39 @@
 <template>
   <div class="container">
+    <modal-block
+    :openModal="openModal"
+    />
     <div class="block-btn">
       <button>По умолчанию</button>
     </div>
     <div class="block-products">
-      <form-block/>
+      <form-block
+        @item="dataItem"
+      />
       <product-block :arrProducts="arrProducts"/>
     </div>
   </div>
 </template>
 
 <script>
-import ProductBlock from "../unitComponents/productBlock";
-import FormBlock from "../unitComponents/formBlock";
+import ProductBlock from '../unitComponents/productBlock'
+import FormBlock from '../unitComponents/formBlock'
+import ModalBlock from '../unitComponents/modalBlock'
 export default {
   name: 'mainPage',
   components: {
+    ModalBlock,
     FormBlock,
     ProductBlock
   },
   data () {
     return {
+      openModal: false,
       arrProducts: [
         {
           title: 'Наименование товара',
           img: '../../../static/imgProduct.jpg',
-          description: 'Довольно-таки интересное описание товара в несколько строк. Довольно-таки интересное описание товара в несколько строк',
+          description: 'Довольно-таки интересное описание товара в несколько строк. Довольно-таки интересное описание товара в несколько стро Довольно-таки интересное описание товара в несколько строк. Довольно-таки интересное описание товара в несколько строк',
           price: 10000
         },
         {
@@ -48,6 +56,12 @@ export default {
         }
       ]
     }
+  },
+  methods: {
+    dataItem (data) {
+      this.arrProducts.push(data)
+      this.openModal = true
+    }
   }
 }
 </script>
@@ -57,6 +71,7 @@ export default {
   padding: 0 32px;
   display: flex;
   flex-direction: column;
+  z-index: 1;
 }
 .block-products {
   display: grid;
@@ -86,7 +101,7 @@ button:hover{
   color: #FFFEFB;
 }
 button:active{
-  border: 2px solid #FF8484;
+  border: 2px solid #7BAE60;
 }
 button::after {
   border-style: solid;
@@ -102,6 +117,7 @@ button::after {
   margin-left: 7px;
   margin-top: 1px;
 }
+
 @media (max-width: 640px ){
   .container {
     padding: 0 15px;
