@@ -1,21 +1,22 @@
 # test-idaproject
 
-> A Vue.js project
+## Команда запуска локального сервера
 
-## Build Setup
+`npm run dev` - запуск webpack-dev-server с проксированием 8080 порт
 
-``` bash
-# install dependencies
-npm install
+## Структура проекта
+### Входная точка
+Входная точка в приложение (файл, в котором инстанцируется корневой компонент vue) - **main.js** (src/main.js).
+Корневой компонент vue - **App.vue** (src/App.vue)
 
-# serve with hot reload at localhost:8080
-npm run dev
+### Компоненты
+Все компоненты системы находятся в директории src/components:
+- **rootComponents** - компонент страницы
+- **unitComponents** - компоненты составных частей страницы
 
-# build for production with minification
-npm run build
+###Версии
 
-# build for production and view the bundle analyzer report
-npm run build --report
-```
+Разработка велась на node v14.15.4 и cli 5.0.8
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+

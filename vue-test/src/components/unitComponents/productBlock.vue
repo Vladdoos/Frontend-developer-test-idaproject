@@ -1,24 +1,61 @@
 <template>
-  <div class="block-products">
-    <div class="block-products__product modal-visible" v-for="(item, index) of arrProducts" :key="index">
-      <div class="showDel"></div>
-      <div class="product-img">
-        <img :src="item.img" alt="logo">
-      </div>
-      <div class="product-text">
-        <h1>{{item.title}}</h1>
-        <h2>{{item.description}}</h2>
-        <p>{{item.price}} руб.</p>
+  <div>
+    <preloader-block v-if="isVisiblePreloader"/>
+    <div v-else class="block-products">
+      <div
+        :class="{'delete-product-block' : item.hideProduct}"
+        class="block-products__product modal-visible"
+        v-for="(item, index) of arrProducts"
+        :key="index"
+      >
+        <div
+          @click="hideProduct(item, index)"
+          class="showDel"
+        ></div>
+        <div class="product-img">
+          <img :src="item.img" alt="logo">
+        </div>
+        <div class="product-text">
+          <h1>{{item.title}}</h1>
+          <h2>{{item.description}}</h2>
+          <p>{{item.price}} руб.</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import PreloaderBlock from './preloaderBlock'
 export default {
   name: 'productBlock',
+  components: {
+    PreloaderBlock
+  },
   props: {
-    arrProducts: []
+    arrProducts: Array,
+  },
+  data () {
+    return {
+      isVisiblePreloader: true
+    }
+  },
+  mounted () {
+    if (this.isVisiblePreloader) {
+      setTimeout(() => this.hidePreloader(), 400)
+    }
+  },
+  methods: {
+    // Скрыть прелоадер
+    hidePreloader () {
+      this.isVisiblePreloader = false
+    },
+    // Плавное скрытие удаляемого товара и
+    // Передача индекса в родительский компонент удаляемого товара
+    hideProduct (item, index) {
+      item.hideProduct = true
+      setTimeout(() => this.$emit('productIndex', index), 400)
+    }
   }
 }
 </script>
@@ -36,6 +73,16 @@ export default {
   box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.04), 0px 6px 10px rgba(0, 0, 0, 0.02);
   border-radius: 4px;
   margin: 0 8px 16px;
+  opacity: 1;
+  -webkit-transition: opacity 400ms ease-in;
+  -moz-transition: opacity 400ms ease-in;
+  transition: opacity 400ms ease-in;
+}
+.delete-product-block {
+  opacity: 0;
+  -webkit-transition: opacity 400ms ease-in;
+  -moz-transition: opacity 400ms ease-in;
+  transition: opacity 400ms ease-in;
 }
 .product-text{
   padding: 16px;

@@ -1,16 +1,26 @@
 <template>
   <div class="container">
     <modal-block
-    :openModal="openModal"
+    :isShowModal="isShowModal"
+    @getOpenModal="getDataModal"
     />
-    <div class="block-btn">
-      <button>По умолчанию</button>
+    <div class="block-select">
+      <select v-model="selected">
+        <option
+          v-for="(option, index) in options"
+          :value="option.value"
+          :key="index"
+        >{{option.text}}</option>
+      </select>
     </div>
     <div class="block-products">
       <form-block
-        @item="dataItem"
+        @item="addProduct"
       />
-      <product-block :arrProducts="arrProducts"/>
+      <product-block
+        :arrProducts="sortedArr"
+        @productIndex="deleteProduct"
+      />
     </div>
   </div>
 </template>
@@ -28,39 +38,99 @@ export default {
   },
   data () {
     return {
-      openModal: false,
+      isShowModal: false,
+      options: [
+        { text: 'По умолчанию', value: 'default' },
+        { text: 'По цене min', value: 'priceMin' },
+        { text: 'По цене max', value: 'priceMax' },
+        { text: 'По наименованию', value: 'title' }
+      ],
+      selected: 'default',
       arrProducts: [
         {
-          title: 'Наименование товара',
+          title: 'Наименование товара 2',
           img: '../../../static/imgProduct.jpg',
           description: 'Довольно-таки интересное описание товара в несколько строк. Довольно-таки интересное описание товара в несколько стро Довольно-таки интересное описание товара в несколько строк. Довольно-таки интересное описание товара в несколько строк',
-          price: 10000
+          price: '10 000',
+          hideProduct: false
         },
         {
-          title: 'Наименование товара',
+          title: 'Наименование товара 1',
           img: '../../../static/imgProduct.jpg',
           description: 'Довольно-таки интересное описание товара в несколько строк. Довольно-таки интересное описание товара в несколько строк',
-          price: 10000
+          price: '14 000',
+          hideProduct: false
         },
         {
-          title: 'Наименование товара',
+          title: 'Наименование товара 4',
           img: '../../../static/imgProduct.jpg',
           description: 'Довольно-таки интересное описание товара в несколько строк. Довольно-таки интересное описание товара в несколько строк',
-          price: 10000
+          price: '5 000',
+          hideProduct: false
         },
         {
-          title: 'Наименование товара',
+          title: 'Наименование товара 3',
           img: '../../../static/imgProduct.jpg',
           description: 'Довольно-таки интересное описание товара в несколько строк. Довольно-таки интересное описание товара в несколько строк',
-          price: 10000
+          price: '11 000',
+          hideProduct: false
         }
       ]
     }
   },
   methods: {
-    dataItem (data) {
+    // Добавление товара
+    addProduct (data) {
       this.arrProducts.push(data)
-      this.openModal = true
+      this.isShowModal = true
+      this.saveProducts()
+    },
+    // Удаление товара
+    deleteProduct (data) {
+      this.arrProducts.splice(data, 1)
+      this.saveProducts()
+    },
+    // Получение данных о модальном окне
+    getDataModal (data) {
+      this.isShowModal = data
+    },
+    // Сохранение товаров в localStorage
+    saveProducts () {
+      let parsed = JSON.stringify(this.arrProducts)
+      localStorage.setItem('arrProducts', parsed)
+    },
+    // Сортировка по возрастанию цены
+    sortPriceMin () {
+      return this.arrProducts.sort((a, b) => a.price.split(' ').join('') - b.price.split(' ').join(''))
+    },
+    // Сортировка по убыванию цены
+    sortPriceMax () {
+      return this.arrProducts.sort((a, b) => b.price.split(' ').join('') - a.price.split(' ').join(''))
+    },
+    // Сортировка по названию
+    sortTittle () {
+      return this.arrProducts.sort((a, b) => a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1)
+    },
+    // Получение массива товаров из localStorage
+    getArrProduct () {
+      if (localStorage.getItem('arrProducts')) {
+        this.arrProducts = JSON.parse(localStorage.getItem('arrProducts'))
+        return this.arrProducts
+      } else {
+        this.saveProducts()
+        return this.arrProducts
+      }
+    },
+  },
+  computed: {
+    // Сортировка товаров
+    sortedArr () {
+      switch (this.selected) {
+        case 'priceMin': return this.sortPriceMin()
+        case 'priceMax': return this.sortPriceMax()
+        case 'title': return this.sortTittle()
+        case 'default': return this.getArrProduct()
+      }
     }
   }
 }
@@ -76,56 +146,15 @@ export default {
 .block-products {
   display: grid;
 }
-.block-btn{
-  width: 100%;
-  display: flex;
-  justify-content: right;
-  margin-bottom: 16px;
-}
-
-button{
-  width: 121px;
-  height: 36px;
-  background: #FFFEFB;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 15px;
-  color: #B4B4B4;
-  border: #FFFEFB;
-  padding: 10px;
-}
-button:hover{
-  background: #E5E5E5;
-  color: #FFFEFB;
-}
-button:active{
-  border: 2px solid #7BAE60;
-}
-button::after {
-  border-style: solid;
-  border-width: 0.15em 0.15em 0 0;
-  content: '';
-  display: inline-block;
-  height: 0.45em;
-  left: 0.15em;
-  top: 0.15em;
-  vertical-align: top;
-  width: 0.45em;
-  transform: rotate(135deg);
-  margin-left: 7px;
-  margin-top: 1px;
-}
 
 @media (max-width: 640px ){
   .container {
     padding: 0 15px;
   }
-  .block-btn{
+  .block-select{
     justify-content: center;
   }
-  button{
+  select{
     width: 100%;
   }
 }
@@ -149,5 +178,29 @@ button::after {
   .container {
     padding: 0 32px;
   }
+}
+
+/*Стили сортировки*/
+.block-select{
+  width: 100%;
+  display: flex;
+  justify-content: right;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+select{
+  background: #FFFEFB;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: #B4B4B4;
+  border: #FFFEFB;
+  padding: 10px 0px 10px 16px;
+}
+select:active, select:focus{
+  outline:none
 }
 </style>

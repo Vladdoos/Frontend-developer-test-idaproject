@@ -10,7 +10,6 @@
           id="title"
           v-model="title"
           placeholder="Введите наименование товара"
-
         >
         <p v-if="errorTittle">Поле является обязательным</p>
 
@@ -45,8 +44,8 @@
 
         <button
           @click="addProduct()"
-          :class="{ 'btn-active': !activity()}"
-          :disabled="activity()"
+          :class="{ 'btn-active': !activityBtn()}"
+          :disabled="activityBtn()"
         >Добавить товар</button>
       </div>
   </div>
@@ -68,13 +67,14 @@ export default {
     }
   },
   methods: {
-    // Добавление продукта
+    // Добавление товара
     addProduct () {
       let itemProduct = {}
       itemProduct.title = this.title
       itemProduct.description = this.description
       itemProduct.img = this.img
       itemProduct.price = this.price
+      itemProduct.hideProduct = false
       this.$emit('item', itemProduct)
       this.title = ''
       this.description = ''
@@ -112,7 +112,7 @@ export default {
       }
     },
     // Активация кнопки
-    activity () {
+    activityBtn () {
       return !(this.title && this.img && String(parseInt(this.price.split(' ').join(''), 10)) === String(this.price.split(' ').join('')))
     }
   }

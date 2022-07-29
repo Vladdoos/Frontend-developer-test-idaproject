@@ -1,10 +1,10 @@
 <template>
-  <div :class="{'modal-visible': openModal}" class="modal">
+  <div :class="{'modal-visible': isShowModal}" class="modal">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h3 class="modal-title">Товар успешно добавлен!</h3>
-          <a @click="closeModal" title="Close" class="close">×</a>
+          <a @click="closeModal" class="close">×</a>
         </div>
         <div class="modal-body">
           <button @click="closeModal">Закрыть</button>
@@ -17,19 +17,19 @@
 <script>
 export default {
   props: {
-    openModal: ''
+    isShowModal: Boolean
   },
   name: 'modalBlock',
   methods: {
+    // Закрытие модального окна
     closeModal () {
-      this.openModal = false
+      this.$emit('getOpenModal', false)
     }
   }
 }
 </script>
 
 <style scoped>
-
 .modal {
   position: fixed;
   top: 0;
@@ -57,7 +57,7 @@ export default {
 @media (min-width: 576px) {
   .modal-dialog {
     max-width: 500px;
-    margin: 30px auto;
+    margin: 200px auto;
   }
 }
 .modal-content {
