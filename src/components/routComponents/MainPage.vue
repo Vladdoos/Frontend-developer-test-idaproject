@@ -120,7 +120,7 @@ export default {
         this.saveProducts()
         return this.arrProducts
       }
-    },
+    }
   },
   computed: {
     // Сортировка товаров

@@ -33,7 +33,7 @@ export default {
     PreloaderBlock
   },
   props: {
-    arrProducts: Array,
+    arrProducts: Array
   },
   data () {
     return {
